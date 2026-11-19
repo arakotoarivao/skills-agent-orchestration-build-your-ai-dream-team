@@ -1,0 +1,25 @@
+{
+  "projects": [
+    {
+      "name": "Atlas Workspace",
+      "owner": "Mona",
+      "status": "On track",
+      "recentActivity": "Shipped the new team activity feed",
+      "priority": "High"
+    },
+    {
+      "name": "Signal Insights",
+      "owner": "Ravi",
+      "status": "In progress",
+      "recentActivity": "Reviewing dashboard filter prototypes",
+      "priority": "Medium"
+    },
+    {
+      "name": "Northstar Mobile",
+      "owner": "Elena",
+      "status": "At risk",
+      "recentActivity": "Waiting on API performance benchmarks",
+      "priority": "Critical"
+    }
+  ]
+}

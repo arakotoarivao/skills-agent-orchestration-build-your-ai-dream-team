@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Project Pulse</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="dashboard">
+      <header class="dashboard-header">
+        <p class="eyebrow">Mona's workspace</p>
+        <h1>Project Pulse</h1>
+        <p class="dashboard-intro">A quick view of what is moving, what needs attention, and what is next.</p>
+      </header>
+
+      <section aria-labelledby="projects-heading">
+        <div class="section-heading">
+          <h2 id="projects-heading">Projects</h2>
+          <p id="project-count" aria-live="polite"></p>
+        </div>
+        <div id="projects" class="project-grid" aria-live="polite">
+          <p class="loading-state">Loading projects…</p>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const projectsContainer = document.querySelector("#projects");
+      const projectCount = document.querySelector("#project-count");
+
+      function text(value, fallback) {
+        return typeof value === "string" && value.trim() ? value : fallback;
+      }
+
+      function renderProjects(projects) {
+        if (!Array.isArray(projects) || projects.length === 0) {
+          projectCount.textContent = "";
+          projectsContainer.innerHTML = '<p class="empty-state">No projects are available yet.</p>';
+          return;
+        }
+
+        projectCount.textContent = `${projects.length} ${projects.length === 1 ? "project" : "projects"}`;
+        projectsContainer.innerHTML = projects.map((project) => {
+          const name = text(project.name, "Untitled project");
+          const owner = text(project.owner, "Unassigned");
+          const status = text(project.status, "Status unavailable");
+          const activity = text(project.recentActivity, "No recent activity");
+          const priority = text(project.priority, "Priority not set");
+
+          return `
+            <article class="project-card">
+              <div class="project-card-header">
+                <div>
+                  <h3>${name}</h3>
+                  <p class="project-owner">Owner: ${owner}</p>
+                </div>
+                <span class="project-status status-badge">${status}</span>
+              </div>
+              <dl class="project-details project-card__details">
+                <div>
+                  <dt>Recent activity</dt>
+                  <dd>${activity}</dd>
+                </div>
+                <div>
+                  <dt>Priority</dt>
+                  <dd class="priority-badge">${priority}</dd>
+                </div>
+              </dl>
+            </article>
+          `;
+        }).join("");
+      }
+
+      fetch("project-data.json")
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Project data request failed: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => renderProjects(data.projects))
+        .catch(() => {
+          projectCount.textContent = "";
+          projectsContainer.innerHTML = '<p class="error-state" role="alert">Project data could not be loaded. Please try again.</p>';
+        });
+    </script>
+  </body>
+</html>
